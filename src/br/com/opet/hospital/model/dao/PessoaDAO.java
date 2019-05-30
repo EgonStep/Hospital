@@ -5,12 +5,12 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import br.com.opet.hospital.conexao.Conexao;
 import br.com.opet.hospital.model.Administrativo;
 import br.com.opet.hospital.model.Enfermeiro;
+import br.com.opet.hospital.model.Especialidade;
 import br.com.opet.hospital.model.Medico;
 import br.com.opet.hospital.model.Pessoa;
 
@@ -23,6 +23,12 @@ public class PessoaDAO {
 			+ "left join MEDICO M on P.ID = M.IDPESSOA "
 			+ "left join ENFERMEIRO E on P.ID = E.IDPESSOA "
 			+ "left join ADMINISTRATIVO A on P.ID = A.IDPESSOA where P.ID = ?";
+	protected final String SELECT_ALL = "select P.ID, P.CPF, P.NOME, P.NASCIMENTO, P.RG, P.EMAIL, ESP.DESCRICAO, E.CARGAHORARIA, A.SALARIO " + 
+			"from PESSOA P " + 
+			"left join MEDICO M on P.ID = M.IDPESSOA " + 
+			"left join ESPECIALIDADE ESP on M.IDESPECIALIDADE = ESP.IDESPECIALIDADE " + 
+			"left join ENFERMEIRO E on P.ID = E.IDPESSOA " + 
+			"left join ADMINISTRATIVO A on P.ID = A.IDPESSOA";
 	protected final String DELETE = "delete from PESSOA where ID = ?";
 
 	public PessoaDAO() { }
@@ -34,15 +40,13 @@ public int cadastrar(Connection conn, Pessoa pessoa) {
 		try {
 			conn.setAutoCommit(false);
 			stmt = conn.prepareStatement(INSERT_PESSOA, generatedColumn);
-
 			stmt.setInt(1, Integer.parseInt(pessoa.getCpf()));
 			stmt.setString(2, pessoa.getNome());
 			stmt.setDate(3, new Date(pessoa.getNascimento().getTime()));
 			stmt.setString(4, pessoa.getRg());
 			stmt.setString(5, pessoa.getEmail());
-
+			
 			int linhasAtualizadas = stmt.executeUpdate();
-			// TODO select count(*) from pessoa para pegar o id (workaround)
 			ResultSet rs = stmt.getGeneratedKeys();
 		
 			while(rs.next()) {
@@ -66,7 +70,6 @@ public int cadastrar(Connection conn, Pessoa pessoa) {
 		} finally {
 			try {
 				stmt.close();
-				conn.close();
 			} catch (SQLException e) {
 				return -1;
 			}
@@ -126,7 +129,7 @@ public int cadastrar(Connection conn, Pessoa pessoa) {
 		return pessoa;
 	}
 
-	public ArrayList<Pessoa> consultarVariasPessoas() {
+	public ArrayList<Pessoa> listar() {
 		ArrayList<Pessoa> pessoas = new ArrayList<Pessoa>();
 
 		Connection con = Conexao.getConexao();
@@ -134,13 +137,24 @@ public int cadastrar(Connection conn, Pessoa pessoa) {
 		ResultSet rs = null;
 
 		try {
-			stmt = con.prepareStatement("select NOME, CPF, NASCIMENTO, RG, EMAIL from PESSOA");
+			stmt = con.prepareStatement(SELECT_ALL);
 			rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				Pessoa esp = new Pessoa(rs.getString("NOME"), rs.getString("CPF"), rs.getDate("NASCIMENTO"),
-						rs.getString("RG"), rs.getString("EMAIL"));
-				pessoas.add(esp);
+				if(rs.getString("descricao") != null) {
+					Especialidade especialidade = new Especialidade(rs.getInt("idespecialidade"), rs.getString("descricao"));
+					Medico medico = new Medico(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), 
+							rs.getString("rg"), rs.getString("email"), especialidade);
+					pessoas.add(medico);
+				} else if (rs.getDouble("salario") != 0) {
+					Administrativo administrativo = new Administrativo(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), 
+							rs.getString("rg"), rs.getString("email"), rs.getDouble("salario"));
+					pessoas.add(administrativo);
+				} else if (rs.getInt("cargaHoraria") != 0) {
+					Enfermeiro enfermeiro = new Enfermeiro(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), 
+							rs.getString("rg"), rs.getString("email"), rs.getInt("cargaHoraria"));
+					pessoas.add(enfermeiro);
+				}
 			}
 		} catch (SQLException e) {
 			System.out.println("Nao foi possivel recuperar lista de pessoas!");

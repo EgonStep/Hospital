@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+</h:head>
+<h:body>
+<h:button value="Index" outcome="/index" />
+	<h3>Cadastar Novo Administrativo</h3>
+	<div>
+	  <h:form id="criarAdm">
+	  	<label>Salario</label>
+		<h:inputText value="#{administrativo.salario}" />
+		<label>Nome</label>
+		<h:inputText value="#{administrativo.nome}" />
+		<label>Nascimento</label>
+		<h:inputText value="#{administrativo.nascimento}"> 
+			<f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+		</h:inputText>
+		<label>CPF</label>
+		<h:inputText value="#{administrativo.cpf}" />
+		<label>RG</label>
+		<h:inputText value="#{administrativo.rg}" />
+		<label>E-mail</label>
+		<h:inputText value="#{administrativo.email}" />
+	  	<h:commandButton action="#{gerenciadorController.cadastrarPessoa(administrativo)}" value="Salvar" />
+	  </h:form>
+	</div>
+</h:body>
+</html>

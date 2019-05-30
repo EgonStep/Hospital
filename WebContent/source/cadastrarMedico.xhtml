@@ -10,6 +10,11 @@
 	<h3>Cadastar Novo Medico</h3>
 	<div>
 	  <h:form id="criarMedico">
+		<label>Especialidade</label>
+	    	<h:selectOneMenu value="#{medico.especialidade.id}">
+	    		<f:selectItems var="espec" value="#{gerenciadorController.listarEspecialidades()}" 
+	    			itemLabel="#{espec.descricao}" itemValue="#{espec.id}"></f:selectItems>
+	    	</h:selectOneMenu>
 		<label>Nome</label>
 		<h:inputText value="#{medico.nome}" />
 		<label>Nascimento</label>

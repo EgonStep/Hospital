@@ -52,7 +52,6 @@ public class MedicoDAO extends Pessoa {
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				//TODO LOG FILE
 				return false;
 			}
 		} finally {
@@ -60,7 +59,6 @@ public class MedicoDAO extends Pessoa {
 				stmt.close();
 				conn.close();
 			} catch (SQLException e) {
-				//TODO LOG FILE
 				return false;
 			}
 		}
@@ -117,8 +115,8 @@ public class MedicoDAO extends Pessoa {
 
 			while (rs.next()) {
 				Especialidade especialidade = new Especialidade(rs.getInt("idespecialidade"), rs.getString("descricao"));
-				Medico medicoTMP = new Medico(rs.getString("cpf"), rs.getString("nome"), rs.getDate("nascimento"), 
-						rs.getString("rg"), rs.getString("email"), especialidade);
+				Medico medicoTMP = new Medico(rs.getString("nome"), rs.getString("cpf"), 
+						rs.getDate("nascimento"), rs.getString("rg"), rs.getString("email"), especialidade);
 				
 				pessoas.add(medicoTMP);
 			}

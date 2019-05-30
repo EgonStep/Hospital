@@ -3,7 +3,14 @@ package br.com.opet.hospital.model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Administrativo extends Pessoa {
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+import br.com.opet.hospital.model.dao.AdministrativoDAO;
+
+@ManagedBean
+@RequestScoped
+public class Administrativo extends AdministrativoDAO {
 
 	private double salario;
 	private int tipo = 3;
@@ -18,7 +25,7 @@ public class Administrativo extends Pessoa {
 		return salario;
 	}
 
-	public void setSalario(int salario) {
+	public void setSalario(double salario) {
 		this.salario = salario;
 	}
 
@@ -28,13 +35,17 @@ public class Administrativo extends Pessoa {
 	}
 
 	public Administrativo() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override
 	public String toString() {
 		return "Administrativo [salario=" + salario + ", nome=" + nome + ", cpf=" + cpf + ", nascimento="
 				+ dat.format(nascimento) + ", rg=" + rg + ", email=" + email + "]";
+	}
+	
+	public boolean cadastrar() {
+		return super.cadastrar(this);
 	}
 
 }

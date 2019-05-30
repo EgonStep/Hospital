@@ -7,6 +7,29 @@
 <h:head>
 </h:head>
 <h:body>
-Listar Colaboradores
+	<h:button value="Index" outcome="/index" />
+	<h3>Lista de Colaboradores</h3>
+	<h:dataTable var="colaborador" value="#{gerenciadorController.listarPessoas()}" styleClass="dataTable">
+		<h:column>
+        	<f:facet name="header">Nome</f:facet>
+             #{colaborador.nome}
+         </h:column>
+         <h:column>
+        	<f:facet name="header">CPF</f:facet>
+             #{colaborador.cpf}
+         </h:column>
+         <h:column>
+        	<f:facet name="header">RG</f:facet>
+             #{colaborador.rg}
+         </h:column>
+         <h:column>
+        	<f:facet name="header">Data de Nascimento</f:facet>
+             #{colaborador.nascimento}
+         </h:column>
+         <h:column>
+        	<f:facet name="header">E-mail</f:facet>
+             #{colaborador.email}
+         </h:column>
+	</h:dataTable>
 </h:body>
 </html>

@@ -3,7 +3,14 @@ package br.com.opet.hospital.model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Enfermeiro extends Pessoa {
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+import br.com.opet.hospital.model.dao.EnfermeiroDAO;
+
+@ManagedBean
+@RequestScoped
+public class Enfermeiro extends EnfermeiroDAO {
 
 	private int cargaHoraria;
 	private int tipo = 2;
@@ -28,12 +35,16 @@ public class Enfermeiro extends Pessoa {
 	}
 	
 	public Enfermeiro() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override
 	public String toString() {
 		return "Enfermeiro [cargaHoraria=" + cargaHoraria + ", nome=" + nome + ", cpf=" + cpf
 				+ ", nascimento=" + dat.format(nascimento) + ", rg=" + rg + ", email=" + email + "]";
-	}	
+	}
+	
+	public boolean cadastrar() {
+		return super.cadastrar(this);
+	}
 }

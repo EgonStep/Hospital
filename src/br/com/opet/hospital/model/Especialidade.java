@@ -10,6 +10,7 @@ import br.com.opet.hospital.model.dao.EspecialidadeDAO;
 @ManagedBean
 @RequestScoped
 public class Especialidade extends EspecialidadeDAO{
+	
 	private int id;
 	private String descricao;
 	

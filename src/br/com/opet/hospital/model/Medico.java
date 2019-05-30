@@ -36,6 +36,7 @@ public class Medico extends MedicoDAO {
 	}
 	
 	public Medico() {
+		this.especialidade = new Especialidade();
 	}
 
 	@Override
@@ -58,7 +59,6 @@ public class Medico extends MedicoDAO {
 	
 	public boolean complementar() {
 		Medico mTMP = super.recuperar(this.cpf);
-		
 		if(mTMP == null)
 			return false;
 		this.especialidade = mTMP.getEspecialidade();

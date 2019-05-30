@@ -123,6 +123,6 @@ public class Pessoa extends PessoaDAO {
 	}
 	
 	public ArrayList<Pessoa> listar(){
-		return null;
+		return super.listar();
 	}
 }

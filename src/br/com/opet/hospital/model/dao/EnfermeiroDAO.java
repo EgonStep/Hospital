@@ -5,26 +5,44 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
+
 import br.com.opet.hospital.conexao.Conexao;
 import br.com.opet.hospital.model.Enfermeiro;
 import br.com.opet.hospital.model.Pessoa;
 
-public class EnfermeiroDAO {
+public class EnfermeiroDAO extends Pessoa{
+	
+	private final String INSERT_ENF = "insert into ENFERMEIRO (IDENF, IDPESSOA, CARGAHORARIA) "
+			+ "values (ENFERMEIRO_SEQ.NEXTVAL,?,?)";
+	private final String UPDATE = "update ENFERMEIRO set CARGAHORARIA = ? where IDPESSOA = ?";
+	private final String SELECT_ALL = "select p.id, p.cpf, p.nome, p.nascimento, p.rg, p.email, e.cargahoraria "
+			+ "from PESSOA p, ENFERMEIRO e where e.IDENF = p.ID";
+	private final String SELECT = "select p.id, p.cpf, p.nome, p.nascimento, p.rg, p.email, e.cargahoraria "
+			+ "from PESSOA p, ENFERMEIRO e where a.IDADM = p.ID where e.IDENF = ?";
+	private final String DELETE = "delete from ENFERMEIRO where IDPESSOA = ?";	
 
-	public boolean cadastrarEnfermeiro(Pessoa pessoa) {
+	public EnfermeiroDAO() {
+	}
+
+	public EnfermeiroDAO(String nome, String cpf, Date nascimento, String rg, String email) {
+		super(nome, cpf, nascimento, rg, email);
+		
+	}
+
+	public boolean cadastrar(Enfermeiro enfermeiro) {
 		Connection conn = Conexao.getConexao();
 		PreparedStatement stmt = null;
-		Enfermeiro enfermeiro = (Enfermeiro) pessoa;
 
 		try {
 			conn.setAutoCommit(false);
-
-			stmt = conn.prepareStatement("insert into enfermeiro (CPFPESSOA, CARGAHORARIA) " + "VALUES(?,?)");
-
-			stmt.setInt(1, Integer.parseInt(pessoa.getCpf()));
+			
+			stmt = conn.prepareStatement(INSERT_ENF);
+			stmt.setInt(1, super.cadastrar(conn));
 			stmt.setInt(2, enfermeiro.getCargaHoraria());
 
 			int linhasAtualizadas = stmt.executeUpdate();
+			
 			if (linhasAtualizadas == 1) {
 				conn.commit();
 			} else {
@@ -35,7 +53,6 @@ public class EnfermeiroDAO {
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				System.out.println("Enfermeiro não salvo");
 				return false;
 			}
 		} finally {
@@ -43,7 +60,6 @@ public class EnfermeiroDAO {
 				stmt.close();
 				conn.close();
 			} catch (SQLException e) {
-				System.out.println("Enfermeiro não salvo");
 				return false;
 			}
 		}
