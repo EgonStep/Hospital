@@ -21,6 +21,10 @@ public class Pessoa extends PessoaDAO {
 	protected String rg;
 	protected String email;
 	protected int tipo = 0;
+	
+	public void setTipo(int tipo) {
+		this.tipo = tipo;
+	}
 
 	public int getTipo() {
 		return tipo;

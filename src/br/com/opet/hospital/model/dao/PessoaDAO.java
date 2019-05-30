@@ -23,10 +23,9 @@ public class PessoaDAO {
 			+ "left join MEDICO M on P.ID = M.IDPESSOA "
 			+ "left join ENFERMEIRO E on P.ID = E.IDPESSOA "
 			+ "left join ADMINISTRATIVO A on P.ID = A.IDPESSOA where P.ID = ?";
-	protected final String SELECT_ALL = "select P.ID, P.CPF, P.NOME, P.NASCIMENTO, P.RG, P.EMAIL, ESP.DESCRICAO, E.CARGAHORARIA, A.SALARIO " + 
+	protected final String SELECT_ALL = "select P.ID, P.CPF, P.NOME, P.NASCIMENTO, P.RG, P.EMAIL, M.IDMED as med, E.IDENF as enf, A.IDADM as adm " + 
 			"from PESSOA P " + 
 			"left join MEDICO M on P.ID = M.IDPESSOA " + 
-			"left join ESPECIALIDADE ESP on M.IDESPECIALIDADE = ESP.IDESPECIALIDADE " + 
 			"left join ENFERMEIRO E on P.ID = E.IDPESSOA " + 
 			"left join ADMINISTRATIVO A on P.ID = A.IDPESSOA";
 	protected final String DELETE = "delete from PESSOA where ID = ?";
@@ -141,19 +140,18 @@ public int cadastrar(Connection conn, Pessoa pessoa) {
 			rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				if(rs.getString("descricao") != null) {
-					Especialidade especialidade = new Especialidade(rs.getInt("idespecialidade"), rs.getString("descricao"));
-					Medico medico = new Medico(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), 
-							rs.getString("rg"), rs.getString("email"), especialidade);
-					pessoas.add(medico);
-				} else if (rs.getDouble("salario") != 0) {
-					Administrativo administrativo = new Administrativo(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), 
-							rs.getString("rg"), rs.getString("email"), rs.getDouble("salario"));
-					pessoas.add(administrativo);
-				} else if (rs.getInt("cargaHoraria") != 0) {
-					Enfermeiro enfermeiro = new Enfermeiro(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), 
-							rs.getString("rg"), rs.getString("email"), rs.getInt("cargaHoraria"));
-					pessoas.add(enfermeiro);
+				if(rs.getString("med") != null) {
+					Pessoa pessoa = new Pessoa(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), rs.getString("rg"), rs.getString("email"));
+					pessoa.setTipo(1);
+					pessoas.add(pessoa);
+				} else if (rs.getString("enf") != null) {
+					Pessoa pessoa = new Pessoa(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), rs.getString("rg"), rs.getString("email"));
+					pessoa.setTipo(2);
+					pessoas.add(pessoa);
+				} else if (rs.getString("adm") != null) {
+					Pessoa pessoa = new Pessoa(rs.getString("nome"), rs.getString("cpf"), rs.getDate("nascimento"), rs.getString("rg"), rs.getString("email"));
+					pessoa.setTipo(3);
+					pessoas.add(pessoa);
 				}
 			}
 		} catch (SQLException e) {
